@@ -199,6 +199,7 @@ function time() { //import moves and direction arrays
             } else {
                 //apple();
                 socket.emit('target', {x:nx,y:ny,hit:true});
+                socket.emit('reciveB', snake);
             }
             if (direction.length > 0) {
 
@@ -212,6 +213,7 @@ function time() { //import moves and direction arrays
             } else {
                 //apple();
                 socket.emit('target', {x:nx,y:ny,hit:true});
+                socket.emit('reciveB', snake);
             }
         }
 
