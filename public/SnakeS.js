@@ -127,6 +127,8 @@ function setup() {
             x = 0;
         }
     }
+
+    console.log(host);
 }
 
 function keyPressed() {

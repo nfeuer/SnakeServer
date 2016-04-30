@@ -95,6 +95,9 @@ io.on('connection', function (socket) {
     // console.log("dY:"+directionY);
     //console.log("serverD:"+direction);
     socket.broadcast.emit('queueH', {dirX:directionX,dirY:directionY});
+    if(allClients.indexOf(socket) == 0) {
+      socket.emit('queueH', {dirX:directionX,dirY:directionY});
+    }
     //console.log("Broadcast queue: "+direction);
 
   });
