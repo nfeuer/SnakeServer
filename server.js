@@ -9,12 +9,25 @@ var user = true;
 var snake = [[0, 0],[1, 0],[2, 0]];
 var nx = 0;
 var ny = 0;
+var allClients = [];
+var prime = true;
 
 server.listen(process.env.PORT || 5000);
 
 app.use(express.static('public'));
 
 io.on('connection', function (socket) {
+  allClients.push(socket);
+  if(allClients.indexOf(socket) == 0) {
+    socket.emit('host', prime);
+  }
+
+  socket.on('check host', function() {
+    if(allClients.indexOf(socket) == 0) {
+      socket.emit('host', prime);
+    }
+  });
+
   socket.broadcast.emit('request', user);
   socket.on('target', function(loc) {
     nx = loc.x;
@@ -67,6 +80,11 @@ io.on('connection', function (socket) {
     socket.emit('set', data);
   });
 
+  socket.on('updateQ', function(entries) {
+    socket.broadcast.emit('queue', entries);
+    console.log("Updated all queues");
+  });
+
   socket.on('keyEvent', function (data) {
     //console.log(data);
     var directionX = data.dirX;
@@ -76,9 +94,19 @@ io.on('connection', function (socket) {
     // console.log("dX:"+directionX);
     // console.log("dY:"+directionY);
     //console.log("serverD:"+direction);
-    socket.broadcast.emit('queue', direction);
-    console.log("Broadcast queue: "+direction);
+    socket.broadcast.emit('queueH', {dirX:directionX,dirY:directionY});
+    //console.log("Broadcast queue: "+direction);
 
   });
+
+  socket.on('disconnect', function() {
+      console.log('Got disconnect!');
+
+      var i = allClients.indexOf(socket);
+      allClients.splice(i, 1);
+      if(i == 0) {
+        socket.broadcast.emit('new host');
+      }
+   });
 
 });

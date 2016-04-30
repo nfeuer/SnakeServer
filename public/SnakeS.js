@@ -2,6 +2,15 @@ var socket = io.connect(window.location.origin);
 
 // =========================== Socket functions =================
 
+socket.on('host', function(data) {
+  host = data;
+  console.log("You are new host");
+});
+
+socket.on('new host', function() {
+  socket.emit('check host');
+});
+
 socket.on('request', function(data) {
   if(data == true){
     if(direction.length > 0) {
@@ -48,6 +57,18 @@ socket.on('current', function(body) {
   console.log("Init body "+ snake);
 });
 
+socket.on('queueH', function(data) {
+  if(host){
+    var directionX = data.dirX;
+    var directionY = data.dirY;
+
+    direction.unshift([directionX, directionY]);
+    socket.emit('updateQ', direction);
+    console.log("Sent info");
+  }
+});
+
+if(!host) {
 socket.on('queue', function(entries) {
   direction = [];
   if(entries[0][0] === undefined && entries.length == 2){
@@ -58,8 +79,10 @@ socket.on('queue', function(entries) {
     }
   }
   console.log("Update Queue"+direction);
+
   //if a new direction array is received, overwrite existing direction array!
 });
+}
 
 socket.on('locked', function(loc) {
   nx = loc.x;
@@ -86,6 +109,7 @@ var nx = 0;
 var ny = 0;
 var hold = [1, 0];
 var a = new Snake(nx, ny, w, h);
+var host = false;
 
 function setup() {
     var x = 0;
@@ -113,25 +137,33 @@ function keyPressed() {
         directionX = 0;
         directionY = -1;
         console.log("UP");
-        direction.unshift([directionX, directionY]);
+        // if(host) {
+        //   direction.unshift([directionX, directionY]);
+        // }
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
     } else if (keyCode === DOWN_ARROW) {
         directionX = 0;
         directionY = 1;
         console.log("DOWN");
-        direction.unshift([directionX, directionY]);
+        // if(host) {
+        //   direction.unshift([directionX, directionY]);
+        // }
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
     } else if (keyCode === RIGHT_ARROW) {
         directionX = 1;
         directionY = 0;
         console.log("RIGHT");
-        direction.unshift([directionX, directionY]);
+        // if(host) {
+        //   direction.unshift([directionX, directionY]);
+        // }
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
     } else if (keyCode === LEFT_ARROW) {
         directionX = -1;
         directionY = 0;
         console.log("LEFT");
-        direction.unshift([directionX, directionY]);
+        // if(host) {
+        //   direction.unshift([directionX, directionY]);
+        // }
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
     }
 
