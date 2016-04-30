@@ -60,7 +60,6 @@ io.on('connection', function (socket) {
     console.log("Got to B");
     snake = [];
     for(var i = 0; i < data.length; i++){
-        console.log("Happened i: "+i);
         snake.push(data[i]);
     }
     console.log("Snake: "+snake);

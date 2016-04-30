@@ -78,7 +78,7 @@ socket.on('queue', function(entries) {
       direction.push(entries[i]);
     }
   }
-  console.log("Update Queue"+direction);
+  //console.log("Update Queue"+direction);
 
   //if a new direction array is received, overwrite existing direction array!
 });
@@ -173,7 +173,9 @@ function keyPressed() {
 
 function draw() {
 
+  if(host){
     time();
+  }
 
     background(255);
     for (var i = 0; i < 500; i += w) {
@@ -228,8 +230,10 @@ function time() { //import moves and direction arrays
         if (direction.length > 0) {
             socket.emit('recieveQ', direction);
             snake.unshift([snake[0][0] + direction[direct][0], snake[0][1] + direction[direct][1]]);
+
             if (snake[0][0] != nx || snake[0][1] != ny) {
                 shorten(snake);
+                socket.emit('recieveB', snake);
             } else {
                 //apple();
                 socket.emit('target', {x:nx,y:ny,hit:true});
@@ -238,12 +242,13 @@ function time() { //import moves and direction arrays
             if (direction.length > 0) {
 
                 hold = direction.pop();
-                console.log(hold);
+                socket.emit('recieveH', hold);
             }
         } else {
             snake.unshift([snake[0][0] + hold[0], snake[0][1] + hold[1]]);
             if (snake[0][0] != nx || snake[0][1] != ny) {
                 shorten(snake);
+                socket.emit('recieveB', snake);
             } else {
                 //apple();
                 socket.emit('target', {x:nx,y:ny,hit:true});
