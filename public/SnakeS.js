@@ -46,6 +46,7 @@ socket.on('serverQ', function(entries) {
 socket.on('hold', function(data) {
   hold[0] = data[0];
   hold[1] = data[1];
+  console.log("got hold");
 });
 
 socket.on('add', function(data) {
@@ -70,7 +71,7 @@ var boxes = [];
 var dimentionX;
 var dimentionY;
 var timed = 0;
-var direction = [[1,0],[0,1]];
+var direction = [];
 var w;
 var h;
 var nx = 0;
@@ -89,9 +90,6 @@ function setup() {
     dimentionX = 64;
     dimentionY = 48;
     createCanvas(windowWidth, windowHeight);
-
-    console.log(w);
-    console.log(h);
 
     for (var i = 0; i < dimentionX * dimentionY; i++) {
         boxes[i] = new Snake(x, y, w, h);
@@ -165,27 +163,32 @@ function draw() {
 
         if (tx == dimentionX) {
             tx = 0;
+
             snake[i][0] = 0;
         }
         if (tx == -1) {
             tx = dimentionX-1;
+
             snake[i][0] = tx;
+
         }
         if (ty == dimentionY) {
             ty = 0;
+
             snake[i][1] = 0;
         }
         if (ty == -1) {
             ty = dimentionY-1;
+
             snake[i][1] = ty;
         }
-
-        boxes[tx + ty * dimentionY].display();
+        boxes[tx + ty * dimentionX].display();
     }
 
     // for(var i = 0; i < boxes.length; i++) {
     //   boxes[i].display();
     // }
+
     a.display();
     timed++;
 
