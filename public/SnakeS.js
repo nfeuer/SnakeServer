@@ -82,7 +82,7 @@ socket.on('queueH', function(data) {
 //
 //   //if a new direction array is received, overwrite existing direction array!
 // });
-}
+//}
 
 socket.on('locked', function(loc) {
   nx = loc.x;
