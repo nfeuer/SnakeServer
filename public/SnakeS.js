@@ -267,7 +267,7 @@ function Snake(x, y, w, h) {
     this.h = h;
 
     this.display = function(color) {
-        console.log(color);
+        //console.log(color);
         fill(color[0], color[1], color[2]);
         rect(x, y, w, h);
 
