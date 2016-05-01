@@ -23,7 +23,11 @@ io.on('connection', function (socket) {
 
   socket.on('input name', function(data) {
     var index = allClients.indexOf(socket);
-    userNames.splice(index,1,data);
+    if(data === ""){
+
+    } else {
+      userNames.splice(index,1,data);
+    }
   });
 
   socket.emit('hold', firm);
