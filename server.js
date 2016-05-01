@@ -44,30 +44,10 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('locked', {x:nx,y:ny});
   });
 
-  // socket.on('receiveQ', function(data) {
-  //   direction = [];
-  //   for(var i = 0; i < data.length; i++){
-  //     direction[i] = data[i];
-  //   }
-  //   console.log("Received Queue: "+direction);
-  // });
-
-  socket.on('receiveH', function(hold) {
-    firm[0] = hold[0];
-    firm[1] = hold[1];
-    console.log("Recieved Hold: "+firm);
-
-  });
-
   socket.on('receiveB', function(data) {
-    console.log("Got to B");
-    snake = [];
-    for(var i = 0; i < data.length; i++){
-        snake.push(data[i]);
-    }
-    console.log("Snake: "+snake);
-
-    socket.broadcast.emit('current', snake);
+    //console.log("Got to B");
+    //console.log("Snake: "+snake);
+    socket.broadcast.emit('current', data);
   });
 
   if(direction.length > 0) {
@@ -78,29 +58,13 @@ io.on('connection', function (socket) {
     console.log("Updated Hold");
   }
 
-  // socket.on('timer', function(data) {
-  //   socket.emit('set', data);
-  // });
-
-  socket.on('updateQ', function(entries) {
-    socket.broadcast.emit('queue', entries);
-    console.log("Updated all queues");
-  });
-
   socket.on('keyEvent', function (data) {
     //console.log(data);
     var directionX = data.dirX;
     var directionY = data.dirY;
+    var guy = allClients[0];
 
-    direction.unshift([directionX, directionY]);
-    // console.log("dX:"+directionX);
-    // console.log("dY:"+directionY);
-    //console.log("serverD:"+direction);
-    socket.broadcast.emit('queueH', {dirX:directionX,dirY:directionY});
-    if(allClients.indexOf(socket) == 0) {
-      socket.emit('queueH', {dirX:directionX,dirY:directionY});
-    }
-    //console.log("Broadcast queue: "+direction);
+    guy.emit('queueH', {dirX:directionX,dirY:directionY});
 
   });
 

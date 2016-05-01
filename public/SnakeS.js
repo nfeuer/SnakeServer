@@ -11,43 +11,6 @@ socket.on('new host', function() {
   socket.emit('check host');
 });
 
-socket.on('request', function(data) {
-  if(data == true){
-    if(direction.length > 0) {
-      socket.emit('receiveQ', direction);
-      console.log("Sent Direction");
-    } else {
-      socket.emit('receiveH', hold);
-      console.log("Sent Hold");
-    }
-    socket.emit('target', {x:nx,y:ny,hit:false});
-    socket.emit('receiveB', snake);
-    console.log("Sending current status "+ snake);
-    // socket.emit('timer', timed);
-  } else {
-  console.log("Did not send data");
-}
-});
-
-// socket.on('tail', function(entries) {
-//   direction = [];
-//   console.log("IMPORTANT: "+direction);
-//   if(entries[0][0] === undefined && entries.length == 2){
-//     direction.push([entries[0],entries[1]]);
-//   } else {
-//     for(var i = 0; i < entries.length; i++){
-//       direction.push(entries[i]);
-//     }
-//   }
-//   console.log("Welcome to Spaz Snake!!");
-// });
-
-socket.on('hold', function(data) {
-  hold[0] = data[0];
-  hold[1] = data[1];
-  console.log("Updated Hold to "+hold);
-});
-
 socket.on('current', function(body) {
   //console.log(body);
   snake = [];
@@ -55,6 +18,7 @@ socket.on('current', function(body) {
       snake.push(body[i]);
   }
   //console.log("Init body "+ snake);
+  console.log("Got it");
 });
 
 socket.on('queueH', function(data) {
@@ -63,26 +27,9 @@ socket.on('queueH', function(data) {
     var directionY = data.dirY;
 
     direction.unshift([directionX, directionY]);
-    //socket.emit('updateQ', direction);
-    console.log("Sent info");
+
   }
 });
-
-// if(!host) {
-// socket.on('queue', function(entries) {
-//   direction = [];
-//   if(entries[0][0] === undefined && entries.length == 2){
-//     direction.push([entries[0],entries[1]]);
-//   } else {
-//     for(var i = 0; i < entries.length; i++){
-//       direction.push(entries[i]);
-//     }
-//   }
-//   //console.log("Update Queue"+direction);
-//
-//   //if a new direction array is received, overwrite existing direction array!
-// });
-//}
 
 socket.on('locked', function(loc) {
   nx = loc.x;
@@ -91,10 +38,6 @@ socket.on('locked', function(loc) {
 
   a = new Snake(nx*w, ny*h, w, h);
 });
-
-// socket.on('set', function(data) {
-//   timed = data;
-// });
 
 //======================= Begin Sketch ====================
 
@@ -139,33 +82,25 @@ function keyPressed() {
         directionX = 0;
         directionY = -1;
         console.log("UP");
-        // if(host) {
-        //   direction.unshift([directionX, directionY]);
-        // }
+
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
     } else if (keyCode === DOWN_ARROW) {
         directionX = 0;
         directionY = 1;
         console.log("DOWN");
-        // if(host) {
-        //   direction.unshift([directionX, directionY]);
-        // }
+
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
     } else if (keyCode === RIGHT_ARROW) {
         directionX = 1;
         directionY = 0;
         console.log("RIGHT");
-        // if(host) {
-        //   direction.unshift([directionX, directionY]);
-        // }
+
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
     } else if (keyCode === LEFT_ARROW) {
         directionX = -1;
         directionY = 0;
         console.log("LEFT");
-        // if(host) {
-        //   direction.unshift([directionX, directionY]);
-        // }
+
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
     }
 
@@ -175,6 +110,8 @@ function draw() {
 
   if(host){
     time();
+  } else {
+    console.log("running")
   }
 
     background(255);
@@ -203,15 +140,9 @@ function draw() {
             ty = 49;
             snake[i][1] = 49;
         }
-        // console.log(ty);
-        // console.log(tx);
+
         boxes[tx + ty * dimention].display();
     }
-
-    // for(var i = 0; i < boxes.length; i++) {
-    //  	boxes[i].display();
-    // }
-
     a.display();
     timed++;
 
@@ -248,12 +179,11 @@ function time() { //import moves and direction arrays
             snake.unshift([snake[0][0] + hold[0], snake[0][1] + hold[1]]);
             if (snake[0][0] != nx || snake[0][1] != ny) {
                 shorten(snake);
-                console.log("should send");
+                //console.log("should send");
                 socket.emit('receiveB', snake);
             } else {
                 //apple();
                 socket.emit('target', {x:nx,y:ny,hit:true});
-
                 socket.emit('receiveB', snake);
             }
         }
