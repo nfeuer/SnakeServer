@@ -18,6 +18,7 @@ app.use(express.static('public'));
 
 io.on('connection', function (socket) {
   allClients.push(socket);
+
   if(allClients.indexOf(socket) == 0) {
     socket.emit('host', prime);
   }
@@ -29,6 +30,7 @@ io.on('connection', function (socket) {
   });
 
   socket.broadcast.emit('request', user);
+
   socket.on('target', function(loc) {
     nx = loc.x;
     ny = loc.y;
@@ -42,21 +44,22 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('locked', {x:nx,y:ny});
   });
 
-  socket.on('recieveQ', function(data) {
+  socket.on('receiveQ', function(data) {
     direction = [];
     for(var i = 0; i < data.length; i++){
       direction[i] = data[i];
     }
-    console.log("Recived Queue: "+direction);
+    console.log("Received Queue: "+direction);
   });
 
-  socket.on('recieveH', function(hold) {
+  socket.on('receiveH', function(hold) {
     firm[0] = hold[0];
     firm[1] = hold[1];
     console.log("Recieved Hold: "+firm);
+
   });
 
-  socket.on('reciveB', function(data) {
+  socket.on('receiveB', function(data) {
     console.log("Got to B");
     snake = [];
     for(var i = 0; i < data.length; i++){
@@ -75,9 +78,9 @@ io.on('connection', function (socket) {
     console.log("Updated Hold");
   }
 
-  socket.on('timer', function(data) {
-    socket.emit('set', data);
-  });
+  // socket.on('timer', function(data) {
+  //   socket.emit('set', data);
+  // });
 
   socket.on('updateQ', function(entries) {
     socket.broadcast.emit('queue', entries);

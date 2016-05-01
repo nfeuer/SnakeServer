@@ -14,16 +14,16 @@ socket.on('new host', function() {
 socket.on('request', function(data) {
   if(data == true){
     if(direction.length > 0) {
-      socket.emit('recieveQ', direction);
+      socket.emit('receiveQ', direction);
       console.log("Sent Direction");
     } else {
-      socket.emit('recieveH', hold);
+      socket.emit('receiveH', hold);
       console.log("Sent Hold");
     }
     socket.emit('target', {x:nx,y:ny,hit:false});
-    socket.emit('reciveB', snake);
+    socket.emit('receiveB', snake);
     console.log("Sending current status "+ snake);
-    socket.emit('timer', timed);
+    // socket.emit('timer', timed);
   } else {
   console.log("Did not send data");
 }
@@ -92,9 +92,9 @@ socket.on('locked', function(loc) {
   a = new Snake(nx*w, ny*h, w, h);
 });
 
-socket.on('set', function(data) {
-  timed = data;
-});
+// socket.on('set', function(data) {
+//   timed = data;
+// });
 
 //======================= Begin Sketch ====================
 
@@ -220,7 +220,7 @@ function draw() {
 function time() { //import moves and direction arrays
     direct = direction.length - 1;
 
-    if (timed == 5) {
+    if (timed == 20) {
         while (direction.length > 0 && direction[direct][0] == -hold[0] && direction[direct][1] == -hold[1]) {
             shorten(direction);
             direct = direction.length - 1;
@@ -237,22 +237,24 @@ function time() { //import moves and direction arrays
             } else {
                 //apple();
                 socket.emit('target', {x:nx,y:ny,hit:true});
-                socket.emit('reciveB', snake);
+                socket.emit('receiveB', snake);
             }
             if (direction.length > 0) {
 
                 hold = direction.pop();
-                socket.emit('recieveH', hold);
+                //socket.emit('recieveH', hold);
             }
         } else {
             snake.unshift([snake[0][0] + hold[0], snake[0][1] + hold[1]]);
             if (snake[0][0] != nx || snake[0][1] != ny) {
                 shorten(snake);
-                socket.emit('recieveB', snake);
+                console.log("should send");
+                socket.emit('receiveB', snake);
             } else {
                 //apple();
                 socket.emit('target', {x:nx,y:ny,hit:true});
-                socket.emit('reciveB', snake);
+
+                socket.emit('receiveB', snake);
             }
         }
 
