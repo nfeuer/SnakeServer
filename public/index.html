@@ -20,7 +20,10 @@
 
   function submit() {
     var name = document.getElementById('userInput').value;
+    var x = document.getElementById('submitInput').style;
+
     sub(name);
+    x.visibility = "hidden";
   }
 
   </script>
@@ -31,7 +34,7 @@
 <body>
 
     User Name: <input type="text" id = "userInput">
-    <button onClick="submit()">Submit</button>
+    <button onClick="submit()" id = "submitInput">Submit</button>
 
 </body>
 </html>

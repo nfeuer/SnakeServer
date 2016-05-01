@@ -202,7 +202,7 @@ function draw() {
     noFill();
     rect(0,0,dimentionX*w,dimentionY*h);
 
-    for (var i = 0; i < snake.length; i++) {
+    for (var i = snake.length-1; i >= 0 ; i--) {
         var tx = snake[i][0];
         var ty = snake[i][1];
 
