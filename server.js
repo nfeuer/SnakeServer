@@ -10,6 +10,7 @@ var allColors = [[255,0,0],[255,0,0],[255,0,0]];
 var nx = 0;
 var ny = 0;
 var allClients = [];
+var userNames = [];
 var prime = true;
 
 server.listen(process.env.PORT || 5000);
@@ -18,6 +19,8 @@ app.use(express.static('public'));
 
 io.on('connection', function (socket) {
   allClients.push(socket);
+  userNames.push("Billy");
+  console.log("Welcome " + userNames[0]);
 
   socket.emit('hold', firm);
   console.log(firm);
@@ -27,9 +30,6 @@ io.on('connection', function (socket) {
   } else {
     allClients[0].emit('new guy', allClients.indexOf(socket));
   }
-
-
-
 
   socket.on('check host', function() {
     if(allClients.indexOf(socket) == 0) {
@@ -50,8 +50,6 @@ io.on('connection', function (socket) {
     console.log(loc);
 
     allColors.push(loc);
-    console.log("Color array " + allColors);
-    console.log(allColors.length);
 
     socket.emit('locked', allColors);
     socket.broadcast.emit('locked', allColors);
@@ -61,8 +59,6 @@ io.on('connection', function (socket) {
     var data = info.bod;
     var index = info.who;
 
-    console.log(index);
-    console.log(data);
     allClients[index].emit('current', data);
   });
 
@@ -78,6 +74,15 @@ io.on('connection', function (socket) {
       firm[0] = directionX;
       firm[1] = directionY;
     }
+  });
+
+  socket.on('notify', function(data) {
+    var index = allClients.indexOf(socket);
+    var note = userNames[index] + ":         " +data.com;
+    var loc = data.col;
+
+    socket.emit('update messages', {mes:note,col:loc});
+    socket.broadcast.emit('update messages', {mes:note,col:loc});
   });
 
   socket.on('disconnect', function() {

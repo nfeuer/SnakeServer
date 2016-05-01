@@ -75,6 +75,12 @@ socket.on('locked', function(loc) {
 
 });
 
+socket.on('update messages', function(data) {
+  var loc = data.col;
+  messages.unshift([data.mes,loc[0],loc[1],loc[2]]);
+  console.log('update chat');
+});
+
 //======================= Begin Sketch ====================
 
 var snake = [[0, 0],[1, 0],[2, 0]];
@@ -94,18 +100,19 @@ var host = false;
 var uColorR, uColorG, uColorB;
 var uColors = [];
 var hits = 0;
+var messages = [];
 
 function setup() {
     //colorMode(HSB);
     var x = 0;
     var y = 0;
 
-    h = floor(windowHeight/48);
+    h = floor((windowHeight-20)/47);
     w = h;
 
-    dimentionX = 64;
-    dimentionY = 48;
-    createCanvas(windowWidth, windowHeight);
+    dimentionX = 63;
+    dimentionY = 47;
+    createCanvas(windowWidth-20, windowHeight-20);
 
     for (var i = 0; i < dimentionX * dimentionY; i++) {
         boxes[i] = new Snake(x, y, w, h);
@@ -131,7 +138,7 @@ function setup() {
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+  resizeCanvas(windowWidth-20, windowHeight-20);
 }
 
 function keyPressed() {
@@ -144,24 +151,28 @@ function keyPressed() {
         console.log("UP");
 
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
+        socket.emit('notify', {com:"Up",col:uColors});
     } else if (keyCode === DOWN_ARROW) {
         directionX = 0;
         directionY = 1;
         console.log("DOWN");
 
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
+        socket.emit('notify', {com:"Down",col:uColors});
     } else if (keyCode === RIGHT_ARROW) {
         directionX = 1;
         directionY = 0;
         console.log("RIGHT");
 
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
+        socket.emit('notify', {com:"Right",col:uColors});
     } else if (keyCode === LEFT_ARROW) {
         directionX = -1;
         directionY = 0;
         console.log("LEFT");
 
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
+        socket.emit('notify', {com:"Left",col:uColors});
     }
 
 }
@@ -178,6 +189,9 @@ function draw() {
     for (var i = 0; i < dimentionY*h; i += h) {
         line(0, i, dimentionX*w, i);
     }
+
+    noFill();
+    rect(0,0,dimentionX*w,dimentionY*h);
 
     for (var i = 0; i < snake.length; i++) {
         var tx = snake[i][0];
@@ -204,8 +218,7 @@ function draw() {
 
             snake[i][1] = ty;
         }
-        console.log(i);
-        console.log(snake.length-1);
+
         boxes[tx + ty * dimentionX].display(allColors[i]);
     }
 
@@ -213,8 +226,9 @@ function draw() {
     //   boxes[i].display();
     // }
 
-    console.log("call");
+
     a.display(uColors);
+    chat();
 
     timed++;
 
@@ -279,7 +293,7 @@ function Snake(x, y, w, h) {
 
     this.display = function(color) {
         //console.log(color);
-        console.log(color + " uColors " + uColors);
+        //console.log(color + " uColors " + uColors);
         fill(color[0], color[1], color[2]);
         rect(x, y, w, h);
 
@@ -293,4 +307,18 @@ function apple() {
     ny = int(random(0, dimentionY));
 
     a = new Snake(nx * w, ny * h, w, h);
+}
+
+function chat() {
+  noFill();
+  rect(dimentionX*w+10,0,windowWidth-(dimentionX+4)*w,dimentionY*h);
+  textSize(h*2);
+  if(messages.length > 0) {
+    if(messages.length)
+    for(var i = 0; i < messages.length; i++) {
+      fill(messages[i][1],messages[i][2],messages[i][3]);
+      text(messages[i][0], dimentionX*w+20, i*h*2+40);
+    }
+  }
+
 }
