@@ -16,10 +16,12 @@ socket.on('new guy', function(data) {
   socket.emit('host report', {dir:direction,who:data});
   socket.emit('receiveB', {bod:snake,who:data});
 
+  console.log("Sent");
+
 });
 
 socket.on('current', function(body) {
-  //console.log(body);
+  console.log(body);
   snake = [];
   for(var i = 0; i < body.length; i++){
       snake.push(body[i]);
@@ -28,13 +30,22 @@ socket.on('current', function(body) {
 
 socket.on('serverQ', function(entries) {
   direction = [];
-  if(entries[0][0] === undefined && entries.length == 2){
-    direction.push([entries[0],entries[1]]);
-  } else {
-    for(var i = 0; i < entries.length; i++){
-      direction.push(entries[i]);
-    }
+  if(entries.length != 0) {
+    if(entries[0][0] === undefined){
+      direction.push([entries[0],entries[1]]);
+    } else {
+        for(var i = 0; i < entries.length; i++){
+          direction.push(entries[i]);
+        }
+      }
   }
+
+  console.log("Got serverQ");
+});
+
+socket.on('hold', function(data) {
+  hold[0] = data[0];
+  hold[1] = data[1];
 });
 
 socket.on('add', function(data) {
@@ -56,11 +67,12 @@ socket.on('locked', function(loc) {
 
 var snake = [[0, 0],[1, 0],[2, 0]];
 var boxes = [];
-var dimention = 50;
+var dimentionX;
+var dimentionY;
 var timed = 0;
 var direction = [[1,0],[0,1]];
-var w = 10;
-var h = 10;
+var w;
+var h;
 var nx = 0;
 var ny = 0;
 var hold = [1, 0];
@@ -70,21 +82,36 @@ var host = false;
 function setup() {
     var x = 0;
     var y = 0;
-    createCanvas(600, 600);
 
-    for (var i = 0; i < dimention * dimention; i++) {
+    h = floor(windowHeight/48);
+    w = h;
+
+    dimentionX = 64;
+    dimentionY = 48;
+    createCanvas(windowWidth, windowHeight);
+
+    console.log(w);
+    console.log(h);
+
+    for (var i = 0; i < dimentionX * dimentionY; i++) {
         boxes[i] = new Snake(x, y, w, h);
         //console.log(x);
         x += w;
 
-        if ((i + 1) % (dimention) == 0 && i != 0) {
+        if ((i + 1) % (dimentionX) == 0 && i != 0) {
             //console.log("i: "+i+" x: "+x+" y: "+y);
             y += h;
             x = 0;
         }
     }
 
+    console.log(boxes.length);
+
     console.log(host);
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
 
 function keyPressed() {
@@ -124,34 +151,41 @@ function draw() {
     time();
 
     background(255);
-    for (var i = 0; i < 500; i += w) {
-        line(i, 0, i, 500);
-        line(0, i, 500, i);
+    for (var i = 0; i < dimentionX*w; i += w) {
+        line(i, 0, i, dimentionY*h);
+    }
+
+    for (var i = 0; i < dimentionY*h; i += h) {
+        line(0, i, dimentionX*w, i);
     }
 
     for (var i = 0; i < snake.length; i++) {
         var tx = snake[i][0];
         var ty = snake[i][1];
 
-        if (tx == 50) {
+        if (tx == dimentionX) {
             tx = 0;
             snake[i][0] = 0;
         }
         if (tx == -1) {
-            tx = 49;
-            snake[i][0] = 49;
+            tx = dimentionX-1;
+            snake[i][0] = tx;
         }
-        if (ty == 50) {
+        if (ty == dimentionY) {
             ty = 0;
             snake[i][1] = 0;
         }
         if (ty == -1) {
-            ty = 49;
-            snake[i][1] = 49;
+            ty = dimentionY-1;
+            snake[i][1] = ty;
         }
 
-        boxes[tx + ty * dimention].display();
+        boxes[tx + ty * dimentionY].display();
     }
+
+    // for(var i = 0; i < boxes.length; i++) {
+    //   boxes[i].display();
+    // }
     a.display();
     timed++;
 
@@ -160,7 +194,7 @@ function draw() {
 function time() { //import moves and direction arrays
     direct = direction.length - 1;
 
-    if (timed == 20) {
+    if (timed == 5) {
 
       if (direction.length > 0) {
           //socket.emit('recieveQ', direction);

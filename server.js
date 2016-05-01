@@ -3,7 +3,6 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 //
-var direction = new Array();
 var firm = [];
 var user = true;
 var snake = [[0, 0],[1, 0],[2, 0]];
@@ -25,6 +24,11 @@ io.on('connection', function (socket) {
     allClients[0].emit('new guy', allClients.indexOf(socket));
   }
 
+  if(firm.length > 1) {
+    socket.emit('hold', firm);
+  }
+
+
   socket.on('check host', function() {
     if(allClients.indexOf(socket) == 0) {
       socket.emit('host', prime);
@@ -35,13 +39,8 @@ io.on('connection', function (socket) {
     var data = info.dir;
     var index = info.who;
 
-    if(data.length > 0) {
-      allClients[index].emit('serverQ', data);
-    }
-  });
-
-  socket.on('requestQ', function() {
-    socket.emit('serverQ', direction);
+    allClients[index].emit('serverQ', data);
+    
   });
 
   socket.on('target', function(loc) {
@@ -58,21 +57,14 @@ io.on('connection', function (socket) {
   });
 
   socket.on('receiveB', function(info) {
+    var data = info.bod;
+    var index = info.who;
 
-    for(var i = 0; i < data.length; i++){
-        console.log("Happened i: "+i);
-        snake.push(data[i]);
-    }
-    //socket.broadcast.emit('current', data);
+    console.log(index);
+    console.log(data);
+    allClients[index].emit('current', data);
   });
 
-  if(direction.length > 0) {
-    socket.emit('tail', direction);
-    console.log("happens once emit tail")
-  } else {
-    socket.emit('hold', firm);
-    console.log("Updated Hold");
-  }
 
   socket.on('keyEvent', function (data) {
     //console.log(data);
@@ -82,6 +74,8 @@ io.on('connection', function (socket) {
     if(directionX != -firm[0] && directionY != -firm[1]) {
       socket.emit('add', {dirX:directionX,dirY:directionY});
       socket.broadcast.emit('add', {dirX:directionX,dirY:directionY});
+      firm[0] = directionX;
+      firm[1] = directionY;
     }
   });
 
