@@ -14,14 +14,14 @@ socket.on('new host', function() {
 socket.on('new guy', function(data) {
 
   socket.emit('host report', {dir:direction,who:data});
-  socket.emit('receiveB', {bod:snake,stag:hits,who:data});
+  socket.emit('receiveB', {bod:snake,who:data});
 
   console.log("Sent");
 
 });
 
 socket.on('current', function(body) {
-  console.log(body);
+  console.log("Snake " + body);
   snake = [];
   for(var i = 0; i < body.length; i++){
       snake.push(body[i]);
@@ -54,6 +54,13 @@ socket.on('add', function(data) {
     var directionY = data.dirY;
 
     direction.unshift([directionX, directionY]);
+});
+
+socket.on('server color', function(col) {
+  allColors = [];
+  for(var i = 0; i < col.length; i++) {
+    allColors[i] = col[i];
+  }
 });
 
 socket.on('locked', function(loc) {
@@ -197,6 +204,8 @@ function draw() {
 
             snake[i][1] = ty;
         }
+        console.log(i);
+        console.log(snake.length-1);
         boxes[tx + ty * dimentionX].display(allColors[i]);
     }
 
@@ -204,7 +213,9 @@ function draw() {
     //   boxes[i].display();
     // }
 
+    console.log("call");
     a.display(uColors);
+
     timed++;
 
 }
@@ -268,6 +279,7 @@ function Snake(x, y, w, h) {
 
     this.display = function(color) {
         //console.log(color);
+        console.log(color + " uColors " + uColors);
         fill(color[0], color[1], color[2]);
         rect(x, y, w, h);
 
@@ -277,8 +289,8 @@ function Snake(x, y, w, h) {
 //=============== Apple =================
 
 function apple() {
-    nx = int(random(0, 50));
-    ny = int(random(0, 50));
+    nx = int(random(0, dimentionX));
+    ny = int(random(0, dimentionY));
 
     a = new Snake(nx * w, ny * h, w, h);
 }

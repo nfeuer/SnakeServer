@@ -42,7 +42,7 @@ io.on('connection', function (socket) {
     var index = info.who;
 
     allClients[index].emit('serverQ', data);
-    allClients[index].emit('locked', allColors);
+    allClients[index].emit('server color', allColors);
 
   });
 
