@@ -14,7 +14,7 @@ socket.on('new host', function() {
 socket.on('new guy', function(data) {
 
   socket.emit('host report', {dir:direction,who:data});
-  socket.emit('receiveB', {bod:snake,who:data});
+  socket.emit('receiveB', {bod:snake,stag:hits,who:data});
 
   console.log("Sent");
 
@@ -57,10 +57,13 @@ socket.on('add', function(data) {
 });
 
 socket.on('locked', function(loc) {
-  apple();
 
-  console.log(loc.col);
-  allColors = loc.col;
+  allColors = [];
+  for(var i = 0; i < loc.length; i++) {
+    allColors[i] = loc[i];
+  }
+  hits++;
+  console.log(allColors);
   console.log("Locked on target..");
 
 });
@@ -83,6 +86,7 @@ var a = new Snake(nx, ny, w, h);
 var host = false;
 var uColorR, uColorG, uColorB;
 var uColors = [];
+var hits = 0;
 
 function setup() {
     //colorMode(HSB);
@@ -215,11 +219,17 @@ function time() { //import moves and direction arrays
           snake.unshift([snake[0][0] + direction[direct][0], snake[0][1] + direction[direct][1]]);
 
           if (snake[0][0] != nx || snake[0][1] != ny) {
+            if(hits == 0){
               shorten(snake);
-          } else {
-              //apple();
+            } else {
+              hits--;
+            }
 
-              socket.emit('target', {col: uColors});
+          } else {
+              apple();
+              shorten(snake);
+              allColors.push(uColors);
+              socket.emit('target', uColors);
 
           }
           if (direction.length > 0) {
@@ -230,13 +240,16 @@ function time() { //import moves and direction arrays
       } else {
           snake.unshift([snake[0][0] + hold[0], snake[0][1] + hold[1]]);
           if (snake[0][0] != nx || snake[0][1] != ny) {
+            if(hits == 0){
               shorten(snake);
-              //console.log("should send");
-
+            } else {
+              hits--;
+            }
           } else {
-              //apple();
+              apple();
+              shorten(snake);
               allColors.push(uColors);
-              socket.emit('target', {col: uColors});
+              socket.emit('target', uColors);
 
           }
       }

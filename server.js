@@ -6,7 +6,7 @@ var io = require('socket.io')(server);
 var firm = [0,1];
 var user = true;
 var snake = [[0, 0],[1, 0],[2, 0]];
-var allColors = [255,255,255];
+var allColors = [[255,0,0],[255,0,0],[255,0,0]];
 var nx = 0;
 var ny = 0;
 var allClients = [];
@@ -42,14 +42,19 @@ io.on('connection', function (socket) {
     var index = info.who;
 
     allClients[index].emit('serverQ', data);
+    allClients[index].emit('locked', allColors);
 
   });
 
   socket.on('target', function(loc) {
-    allColors.push(loc.col);
-    console.log(loc.col);
-    socket.emit('locked', {col:allColors});
-    socket.broadcast.emit('locked', {col:allColors});
+    console.log(loc);
+
+    allColors.push(loc);
+    console.log("Color array " + allColors);
+    console.log(allColors.length);
+
+    socket.emit('locked', allColors);
+    socket.broadcast.emit('locked', allColors);
   });
 
   socket.on('receiveB', function(info) {
