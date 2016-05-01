@@ -19,8 +19,12 @@ app.use(express.static('public'));
 
 io.on('connection', function (socket) {
   allClients.push(socket);
-  userNames.push("Billy");
-  console.log("Welcome " + userNames[0]);
+  userNames.push("The Monkey");
+
+  socket.on('input name', function(data) {
+    var index = allClients.indexOf(socket);
+    userNames.splice(index,1,data);
+  });
 
   socket.emit('hold', firm);
   console.log(firm);

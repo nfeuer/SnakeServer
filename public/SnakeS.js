@@ -101,18 +101,19 @@ var uColorR, uColorG, uColorB;
 var uColors = [];
 var hits = 0;
 var messages = [];
+var name = false;
 
 function setup() {
     //colorMode(HSB);
     var x = 0;
     var y = 0;
 
-    h = floor((windowHeight-20)/47);
+    h = floor((windowHeight-60)/47);
     w = h;
 
     dimentionX = 63;
     dimentionY = 47;
-    createCanvas(windowWidth-20, windowHeight-20);
+    createCanvas(windowWidth-60, windowHeight-30);
 
     for (var i = 0; i < dimentionX * dimentionY; i++) {
         boxes[i] = new Snake(x, y, w, h);
@@ -138,13 +139,14 @@ function setup() {
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth-20, windowHeight-20);
+  resizeCanvas(windowWidth-60, windowHeight-30);
 }
 
 function keyPressed() {
   var directionX; // changes index
   var directionY; // changes index
 
+  if(name === "true") {
     if (keyCode === UP_ARROW) {
         directionX = 0;
         directionY = -1;
@@ -174,8 +176,13 @@ function keyPressed() {
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
         socket.emit('notify', {com:"Left",col:uColors});
     }
+  } else {
+    if(keyCode === LEFT_ARROW || keyCode === RIGHT_ARROW || keyCode === DOWN_ARROW || keyCode === UP_ARROW) {
+      alert("Please Put in userName!");
+    }
+    }
+  }
 
-}
 
 function draw() {
 
@@ -236,7 +243,6 @@ function draw() {
 
 function time() { //import moves and direction arrays
     direct = direction.length - 1;
-
     if (timed == 5) {
       //console.log(allColors);
       if (direction.length > 0) {
@@ -314,11 +320,23 @@ function chat() {
   rect(dimentionX*w+10,0,windowWidth-(dimentionX+4)*w,dimentionY*h);
   textSize(h*2);
   if(messages.length > 0) {
-    if(messages.length)
+    if(messages.length*h*2+80 > dimentionY*h) {
+      shorten(messages);
+    }
     for(var i = 0; i < messages.length; i++) {
       fill(messages[i][1],messages[i][2],messages[i][3]);
-      text(messages[i][0], dimentionX*w+20, i*h*2+40);
+      text(messages[i][0], dimentionX*w+20, i*h*2+80);
     }
   }
+}
 
+function sub(data) {
+  if(name === "false") {
+    name = true;
+    console.log(name);
+    var urName = data;
+
+    console.log(urName + " Welcome!");
+    socket.emit('input name', urName);
+  }
 }
