@@ -108,6 +108,8 @@ function setup() {
     var x = 0;
     var y = 0;
 
+    alert("Welcome to Spaz Snake! Please Submit User Name!");
+
     h = floor((windowHeight-60)/47);
     w = h;
 
