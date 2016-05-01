@@ -6,6 +6,7 @@ var io = require('socket.io')(server);
 var firm = [0,1];
 var user = true;
 var snake = [[0, 0],[1, 0],[2, 0]];
+var allColors = [255,255,255];
 var nx = 0;
 var ny = 0;
 var allClients = [];
@@ -45,16 +46,10 @@ io.on('connection', function (socket) {
   });
 
   socket.on('target', function(loc) {
-    nx = loc.x;
-    ny = loc.y;
-    if(loc.hit) {
-      nx = Math.floor(Math.random()*50);
-      ny = Math.floor(Math.random()*50);
-      console.log("New Apple");
-    }
-    console.log("Send Target Location");
-    socket.emit('locked', {x:nx,y:ny});
-    socket.broadcast.emit('locked', {x:nx,y:ny});
+    allColors.push(loc.col);
+    console.log(loc.col);
+    socket.emit('locked', {col:allColors});
+    socket.broadcast.emit('locked', {col:allColors});
   });
 
   socket.on('receiveB', function(info) {

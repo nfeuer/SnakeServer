@@ -57,16 +57,18 @@ socket.on('add', function(data) {
 });
 
 socket.on('locked', function(loc) {
-  nx = loc.x;
-  ny = loc.y;
+  apple();
+
+  console.log(loc.col);
+  allColors = loc.col;
   console.log("Locked on target..");
 
-  a = new Snake(nx*w, ny*h, w, h);
 });
 
 //======================= Begin Sketch ====================
 
 var snake = [[0, 0],[1, 0],[2, 0]];
+var allColors = [[255,0,0],[255,0,0],[255,0,0]];
 var boxes = [];
 var dimentionX;
 var dimentionY;
@@ -79,8 +81,11 @@ var ny = 0;
 var hold = [1, 0];
 var a = new Snake(nx, ny, w, h);
 var host = false;
+var uColorR, uColorG, uColorB;
+var uColors = [];
 
 function setup() {
+    //colorMode(HSB);
     var x = 0;
     var y = 0;
 
@@ -102,6 +107,12 @@ function setup() {
             x = 0;
         }
     }
+
+    uColorR = floor(random(255));
+    uColorG = floor(random(255));
+    uColorB = floor(random(255));
+    uColors.push([uColorR,uColorG,uColorB]);
+    apple();
 
     console.log(boxes.length);
 
@@ -182,14 +193,14 @@ function draw() {
 
             snake[i][1] = ty;
         }
-        boxes[tx + ty * dimentionX].display();
+        boxes[tx + ty * dimentionX].display(allColors[i]);
     }
 
     // for(var i = 0; i < boxes.length; i++) {
     //   boxes[i].display();
     // }
 
-    a.display();
+    a.display(uColors);
     timed++;
 
 }
@@ -198,7 +209,7 @@ function time() { //import moves and direction arrays
     direct = direction.length - 1;
 
     if (timed == 5) {
-
+      //console.log(allColors);
       if (direction.length > 0) {
           //socket.emit('recieveQ', direction);
           snake.unshift([snake[0][0] + direction[direct][0], snake[0][1] + direction[direct][1]]);
@@ -207,7 +218,8 @@ function time() { //import moves and direction arrays
               shorten(snake);
           } else {
               //apple();
-              socket.emit('target', {x:nx,y:ny,hit:true});
+
+              socket.emit('target', {col: uColors});
 
           }
           if (direction.length > 0) {
@@ -223,7 +235,8 @@ function time() { //import moves and direction arrays
 
           } else {
               //apple();
-              socket.emit('target', {x:nx,y:ny,hit:true});
+              allColors.push(uColors);
+              socket.emit('target', {col: uColors});
 
           }
       }
@@ -240,17 +253,19 @@ function Snake(x, y, w, h) {
     this.w = w;
     this.h = h;
 
-    this.display = function() {
-        fill(255, 0, 0);
+    this.display = function(color) {
+        console.log(color);
+        fill(color[0], color[1], color[2]);
         rect(x, y, w, h);
+
     }
 }
 
 //=============== Apple =================
 
-// function apple() {
-//     nx = int(random(0, 50));
-//     ny = int(random(0, 50));
-//
-//     a = new Snake(nx * w, ny * h, w, h);
-// }
+function apple() {
+    nx = int(random(0, 50));
+    ny = int(random(0, 50));
+
+    a = new Snake(nx * w, ny * h, w, h);
+}
