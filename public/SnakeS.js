@@ -29,18 +29,18 @@ socket.on('request', function(data) {
 }
 });
 
-socket.on('tail', function(entries) {
-  direction = [];
-  console.log("IMPORTANT: "+direction);
-  if(entries[0][0] === undefined && entries.length == 2){
-    direction.push([entries[0],entries[1]]);
-  } else {
-    for(var i = 0; i < entries.length; i++){
-      direction.push(entries[i]);
-    }
-  }
-  console.log("Welcome to Spaz Snake!!");
-});
+// socket.on('tail', function(entries) {
+//   direction = [];
+//   console.log("IMPORTANT: "+direction);
+//   if(entries[0][0] === undefined && entries.length == 2){
+//     direction.push([entries[0],entries[1]]);
+//   } else {
+//     for(var i = 0; i < entries.length; i++){
+//       direction.push(entries[i]);
+//     }
+//   }
+//   console.log("Welcome to Spaz Snake!!");
+// });
 
 socket.on('hold', function(data) {
   hold[0] = data[0];
@@ -54,7 +54,7 @@ socket.on('current', function(body) {
   for(var i = 0; i < body.length; i++){
       snake.push(body[i]);
   }
-  console.log("Init body "+ snake);
+  //console.log("Init body "+ snake);
 });
 
 socket.on('queueH', function(data) {
@@ -63,25 +63,25 @@ socket.on('queueH', function(data) {
     var directionY = data.dirY;
 
     direction.unshift([directionX, directionY]);
-    socket.emit('updateQ', direction);
+    //socket.emit('updateQ', direction);
     console.log("Sent info");
   }
 });
 
-if(!host) {
-socket.on('queue', function(entries) {
-  direction = [];
-  if(entries[0][0] === undefined && entries.length == 2){
-    direction.push([entries[0],entries[1]]);
-  } else {
-    for(var i = 0; i < entries.length; i++){
-      direction.push(entries[i]);
-    }
-  }
-  //console.log("Update Queue"+direction);
-
-  //if a new direction array is received, overwrite existing direction array!
-});
+// if(!host) {
+// socket.on('queue', function(entries) {
+//   direction = [];
+//   if(entries[0][0] === undefined && entries.length == 2){
+//     direction.push([entries[0],entries[1]]);
+//   } else {
+//     for(var i = 0; i < entries.length; i++){
+//       direction.push(entries[i]);
+//     }
+//   }
+//   //console.log("Update Queue"+direction);
+//
+//   //if a new direction array is received, overwrite existing direction array!
+// });
 }
 
 socket.on('locked', function(loc) {
@@ -228,7 +228,7 @@ function time() { //import moves and direction arrays
         }
         //console.log("move");
         if (direction.length > 0) {
-            socket.emit('recieveQ', direction);
+            //socket.emit('recieveQ', direction);
             snake.unshift([snake[0][0] + direction[direct][0], snake[0][1] + direction[direct][1]]);
 
             if (snake[0][0] != nx || snake[0][1] != ny) {

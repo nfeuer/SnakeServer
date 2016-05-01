@@ -29,7 +29,7 @@ io.on('connection', function (socket) {
     }
   });
 
-  socket.broadcast.emit('request', user);
+  //socket.broadcast.emit('request', user);
 
   socket.on('target', function(loc) {
     nx = loc.x;
@@ -44,13 +44,13 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('locked', {x:nx,y:ny});
   });
 
-  socket.on('receiveQ', function(data) {
-    direction = [];
-    for(var i = 0; i < data.length; i++){
-      direction[i] = data[i];
-    }
-    console.log("Received Queue: "+direction);
-  });
+  // socket.on('receiveQ', function(data) {
+  //   direction = [];
+  //   for(var i = 0; i < data.length; i++){
+  //     direction[i] = data[i];
+  //   }
+  //   console.log("Received Queue: "+direction);
+  // });
 
   socket.on('receiveH', function(hold) {
     firm[0] = hold[0];
