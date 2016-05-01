@@ -21,6 +21,8 @@ io.on('connection', function (socket) {
 
   if(allClients.indexOf(socket) == 0) {
     socket.emit('host', prime);
+  } else {
+    allClients[0].emit('new guy', allClients.indexOf(socket));
   }
 
   socket.on('check host', function() {
@@ -29,7 +31,18 @@ io.on('connection', function (socket) {
     }
   });
 
-  //socket.broadcast.emit('request', user);
+  socket.on('host report', function(info) {
+    var data = info.dir;
+    var index = info.who;
+
+    if(data.length > 0) {
+      allClients[index].emit('serverQ', data);
+    }
+  });
+
+  socket.on('requestQ', function() {
+    socket.emit('serverQ', direction);
+  });
 
   socket.on('target', function(loc) {
     nx = loc.x;
@@ -44,10 +57,13 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('locked', {x:nx,y:ny});
   });
 
-  socket.on('receiveB', function(data) {
-    //console.log("Got to B");
-    //console.log("Snake: "+snake);
-    socket.broadcast.emit('current', data);
+  socket.on('receiveB', function(info) {
+
+    for(var i = 0; i < data.length; i++){
+        console.log("Happened i: "+i);
+        snake.push(data[i]);
+    }
+    //socket.broadcast.emit('current', data);
   });
 
   if(direction.length > 0) {
@@ -62,10 +78,11 @@ io.on('connection', function (socket) {
     //console.log(data);
     var directionX = data.dirX;
     var directionY = data.dirY;
-    var guy = allClients[0];
 
-    guy.emit('queueH', {dirX:directionX,dirY:directionY});
-
+    if(directionX != -firm[0] && directionY != -firm[1]) {
+      socket.emit('add', {dirX:directionX,dirY:directionY});
+      socket.broadcast.emit('add', {dirX:directionX,dirY:directionY});
+    }
   });
 
   socket.on('disconnect', function() {

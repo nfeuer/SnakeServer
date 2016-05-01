@@ -11,24 +11,37 @@ socket.on('new host', function() {
   socket.emit('check host');
 });
 
+socket.on('new guy', function(data) {
+
+  socket.emit('host report', {dir:direction,who:data});
+  socket.emit('receiveB', {bod:snake,who:data});
+
+});
+
 socket.on('current', function(body) {
   //console.log(body);
   snake = [];
   for(var i = 0; i < body.length; i++){
       snake.push(body[i]);
   }
-  //console.log("Init body "+ snake);
-  console.log("Got it");
 });
 
-socket.on('queueH', function(data) {
-  if(host){
+socket.on('serverQ', function(entries) {
+  direction = [];
+  if(entries[0][0] === undefined && entries.length == 2){
+    direction.push([entries[0],entries[1]]);
+  } else {
+    for(var i = 0; i < entries.length; i++){
+      direction.push(entries[i]);
+    }
+  }
+});
+
+socket.on('add', function(data) {
     var directionX = data.dirX;
     var directionY = data.dirY;
 
     direction.unshift([directionX, directionY]);
-
-  }
 });
 
 socket.on('locked', function(loc) {
@@ -108,11 +121,7 @@ function keyPressed() {
 
 function draw() {
 
-  if(host){
     time();
-  } else {
-    console.log("running")
-  }
 
     background(255);
     for (var i = 0; i < 500; i += w) {
@@ -152,41 +161,35 @@ function time() { //import moves and direction arrays
     direct = direction.length - 1;
 
     if (timed == 20) {
-        while (direction.length > 0 && direction[direct][0] == -hold[0] && direction[direct][1] == -hold[1]) {
-            shorten(direction);
-            direct = direction.length - 1;
-            console.log("work");
-        }
-        //console.log("move");
-        if (direction.length > 0) {
-            //socket.emit('recieveQ', direction);
-            snake.unshift([snake[0][0] + direction[direct][0], snake[0][1] + direction[direct][1]]);
 
-            if (snake[0][0] != nx || snake[0][1] != ny) {
-                shorten(snake);
-                socket.emit('recieveB', snake);
-            } else {
-                //apple();
-                socket.emit('target', {x:nx,y:ny,hit:true});
-                socket.emit('receiveB', snake);
-            }
-            if (direction.length > 0) {
+      if (direction.length > 0) {
+          //socket.emit('recieveQ', direction);
+          snake.unshift([snake[0][0] + direction[direct][0], snake[0][1] + direction[direct][1]]);
 
-                hold = direction.pop();
-                //socket.emit('recieveH', hold);
-            }
-        } else {
-            snake.unshift([snake[0][0] + hold[0], snake[0][1] + hold[1]]);
-            if (snake[0][0] != nx || snake[0][1] != ny) {
-                shorten(snake);
-                //console.log("should send");
-                socket.emit('receiveB', snake);
-            } else {
-                //apple();
-                socket.emit('target', {x:nx,y:ny,hit:true});
-                socket.emit('receiveB', snake);
-            }
-        }
+          if (snake[0][0] != nx || snake[0][1] != ny) {
+              shorten(snake);
+          } else {
+              //apple();
+              socket.emit('target', {x:nx,y:ny,hit:true});
+
+          }
+          if (direction.length > 0) {
+
+              hold = direction.pop();
+              //socket.emit('recieveH', hold);
+          }
+      } else {
+          snake.unshift([snake[0][0] + hold[0], snake[0][1] + hold[1]]);
+          if (snake[0][0] != nx || snake[0][1] != ny) {
+              shorten(snake);
+              //console.log("should send");
+
+          } else {
+              //apple();
+              socket.emit('target', {x:nx,y:ny,hit:true});
+
+          }
+      }
 
         timed = 0;
     }
