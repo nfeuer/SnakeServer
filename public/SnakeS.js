@@ -37,7 +37,6 @@ socket.on('serverQ', function(entries) { //Listen for queue update
         }
       }
   }
-
   console.log("Got serverQ");
 });
 
@@ -89,10 +88,8 @@ var timed = 0; //Delay before snake moves
 var direction = []; //Holds direction queue
 var w;
 var h;
-var nx = 0; //For apple location
-var ny = 0;
 var hold = [1, 0]; //Default direction for when queue empty
-var a = new Snake(nx, ny, w, h); //For apple
+var a = [];
 var host = false; //Default not host
 var uColorR, uColorG, uColorB; //For player color
 var uColors = []; //User color
@@ -132,7 +129,10 @@ function setup() {
     uColorG = floor(random(255));
     uColorB = floor(random(255));
     uColors.push([uColorR,uColorG,uColorB]);
-    apple(); //Create apple
+    for(var i = 0; i < 5; i++) {
+      apple(); //Create apple
+    }
+
 
     console.log(boxes.length);
 
@@ -245,8 +245,10 @@ function draw() {
     //   boxes[i].display();
     // }
 
+    for(var i = 0; i < a.length; i++) {
+      a[i].display(uColors); //Display apple
+    }
 
-    a.display(uColors); //Display apple
     chat(); //Run chat
 
     timed++; //Snake movement is based on draw framerate; one of the reasons there is latency
@@ -260,13 +262,12 @@ function time() { //Moves snake
       if (direction.length > 0) {
           snake.unshift([snake[0][0] + direction[direct][0], snake[0][1] + direction[direct][1]]); //Adds snake segment as new head
 
-          if (snake[0][0] != nx || snake[0][1] != ny) { //Check if new head is over apple
+          if (check()) { //Check if new head is over apple
             if(hits == 0){ //If hits > 0, the snake body will be extended
               shorten(snake); //Otherwise, to account for added segment remove tail
             } else {
               hits--; //If left snake extended
             }
-
           } else { //If over apple
               apple(); //Create new apple
               shorten(snake); //In order to keep all instances as similar as possible, the snake can only be extended if the server increases hits
@@ -278,7 +279,7 @@ function time() { //Moves snake
           }
       } else { //If queue is empty, default move copy of above
           snake.unshift([snake[0][0] + hold[0], snake[0][1] + hold[1]]);
-          if (snake[0][0] != nx || snake[0][1] != ny) {
+          if (check()) {
             if(hits == 0){
               shorten(snake);
             } else {
@@ -305,9 +306,13 @@ function Snake(x, y, w, h) { //My simple body object
     this.w = w;
     this.h = h;
 
+    this.getX = function() {return x;}
+    this.getY = function() {return y;}
+
     this.display = function(color) {
-        colorMode(HSB);
-        fill(color[0], 255, 255);
+        colorMode(HSB); //Originally I was using RGB because earlier when working in HSB the data coming back from the server came in the form of an object
+        //Decided to do a last minute test and now it works
+        fill(color[0], 255, 255); //Even though I only use one value, it works this way coming back from the server
         noStroke();
         rect(x, y, w, h);
     }
@@ -318,10 +323,20 @@ function Snake(x, y, w, h) { //My simple body object
 // ============================================
 
 function apple() { //Creates new apple in a random location
-    nx = int(random(0, dimentionX));
-    ny = int(random(0, dimentionY));
+    var nx = int(random(0, dimentionX));
+    var ny = int(random(0, dimentionY));
 
-    a = new Snake(nx * w, ny * h, w, h); //Uses body object
+    a.push(new Snake(nx * w, ny * h, w, h)); //Uses body object
+}
+
+function check() { //Check if over apple
+  for(var i = 0; i < a.length; i++) {
+    if(snake[0][0]*w == a[i].getX() && snake[0][1]*h == a[i].getY()) {
+      a.splice(i,1);
+      return false;
+    }
+  }
+  return true;
 }
 
 function chat() { //Draws the chat box and messages
@@ -351,7 +366,7 @@ function sub(data) { //Function for when user submits username
   }
 }
 
-function changeB() {
+function changeB() { //Change background of field
   if(c == 255) {
     c = 0;
   } else {
@@ -359,7 +374,7 @@ function changeB() {
   }
 }
 
-function changeC() {
+function changeC() { //Change user colors
   uColors = [];
   uColorR = floor(random(255));
   uColorG = floor(random(255));
@@ -367,6 +382,6 @@ function changeC() {
   uColors.push([uColorR,uColorG,uColorB]);
 }
 
-function changeG() {
+function changeG() { //Show or hide grid
   grid = !grid;
 }
