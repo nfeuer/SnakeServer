@@ -24,7 +24,6 @@ io.on('connection', function (socket) {
   socket.on('input name', function(data) {
     var index = allClients.indexOf(socket);
     if(data === ""){
-
     } else {
       userNames.splice(index,1,data);
     }
@@ -35,9 +34,11 @@ io.on('connection', function (socket) {
 
   if(allClients.indexOf(socket) == 0) {
     socket.emit('host', prime);
-  } else {
-    allClients[0].emit('new guy', allClients.indexOf(socket));
   }
+
+  socket.on('loaded', function() {
+    allClients[0].emit('new guy', allClients.indexOf(socket));
+  });
 
   socket.on('check host', function() {
     if(allClients.indexOf(socket) == 0) {
@@ -94,7 +95,7 @@ io.on('connection', function (socket) {
   });
 
   socket.on('disconnect', function() {
-      console.log('Got disconnect!');
+      console.log('Disconnected');
 
       var i = allClients.indexOf(socket);
       allClients.splice(i, 1);

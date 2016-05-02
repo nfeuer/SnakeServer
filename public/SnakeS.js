@@ -109,6 +109,7 @@ function setup() {
     var y = 0;
 
     alert("Welcome to Spaz Snake! Please Submit User Name!");
+    socket.emit('loaded');
 
     h = floor((windowHeight-60)/47);
     w = h;
