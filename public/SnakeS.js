@@ -99,6 +99,8 @@ var uColors = []; //User color
 var hits = 0;
 var messages = []; //Chat box messages
 var name = false; //For if the user input their name
+var c = 255;
+var grid = true;
 
 function setup() {
     var x = 0;
@@ -187,12 +189,24 @@ function draw() {
 
     time(); //Move snake
     background(255);
-    for (var i = 0; i < dimentionX*w; i += w) { //Draw girdlines
-        line(i, 0, i, dimentionY*h);
+
+    fill(c);
+    rect(0,0,dimentionX*w,dimentionY*h);
+
+    if(c == 255){
+      stroke(0);
+    } else {
+      stroke(255);
     }
 
-    for (var i = 0; i < dimentionY*h; i += h) {
-        line(0, i, dimentionX*w, i);
+    if(grid) {
+      for (var i = 0; i < dimentionX*w; i += w) { //Draw girdlines
+          line(i, 0, i, dimentionY*h);
+      }
+
+      for (var i = 0; i < dimentionY*h; i += h) {
+          line(0, i, dimentionX*w, i);
+      }
     }
 
     noFill();
@@ -292,7 +306,9 @@ function Snake(x, y, w, h) { //My simple body object
     this.h = h;
 
     this.display = function(color) {
-        fill(color[0], color[1], color[2]);
+        colorMode(HSB);
+        fill(color[0], 255, 255);
+        noStroke();
         rect(x, y, w, h);
     }
 }
@@ -310,6 +326,7 @@ function apple() { //Creates new apple in a random location
 
 function chat() { //Draws the chat box and messages
   noFill();
+  stroke(0);
   rect(dimentionX*w+10,0,windowWidth-(dimentionX+4)*w,dimentionY*h);
   textSize(h*2);
   if(messages.length > 0) {
@@ -332,4 +349,24 @@ function sub(data) { //Function for when user submits username
     console.log(urName + " Welcome!");
     socket.emit('input name', urName); //Send username to server
   }
+}
+
+function changeB() {
+  if(c == 255) {
+    c = 0;
+  } else {
+    c = 255;
+  }
+}
+
+function changeC() {
+  uColors = [];
+  uColorR = floor(random(255));
+  uColorG = floor(random(255));
+  uColorB = floor(random(255));
+  uColors.push([uColorR,uColorG,uColorB]);
+}
+
+function changeG() {
+  grid = !grid;
 }
