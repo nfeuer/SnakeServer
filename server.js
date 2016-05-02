@@ -4,7 +4,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 // =============================================
-//              Server variables
+//              Server Variables
 // =============================================
 
 var firm = [0,1]; //Holds previous direction
@@ -57,7 +57,7 @@ io.on('connection', function (socket) {
 
   socket.on('host report', function(info) { //Listen for data update from 'host'
     var data = info.dir;
-    var index = info.who;
+    var index = info.who; //Index of new user in list
 
     allClients[index].emit('serverQ', data); //Send the current queue to new user
     allClients[index].emit('server color', allColors); //Send color list to new user
