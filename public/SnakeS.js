@@ -37,7 +37,6 @@ socket.on('serverQ', function(entries) { //Listen for queue update
         }
       }
   }
-
   console.log("Got serverQ");
 });
 
@@ -311,8 +310,9 @@ function Snake(x, y, w, h) { //My simple body object
     this.getY = function() {return y;}
 
     this.display = function(color) {
-        colorMode(HSB);
-        fill(color[0], 255, 255);
+        colorMode(HSB); //Originally I was using RGB because earlier when working in HSB the data coming back from the server came in the form of an object
+        //Decided to do a last minute test and now it works
+        fill(color[0], 255, 255); //Even though I only use one value, it works this way coming back from the server
         noStroke();
         rect(x, y, w, h);
     }
@@ -329,11 +329,10 @@ function apple() { //Creates new apple in a random location
     a.push(new Snake(nx * w, ny * h, w, h)); //Uses body object
 }
 
-function check() {
+function check() { //Check if over apple
   for(var i = 0; i < a.length; i++) {
     if(snake[0][0]*w == a[i].getX() && snake[0][1]*h == a[i].getY()) {
       a.splice(i,1);
-      console.log("Hppen");
       return false;
     }
   }
@@ -367,7 +366,7 @@ function sub(data) { //Function for when user submits username
   }
 }
 
-function changeB() {
+function changeB() { //Change background of field
   if(c == 255) {
     c = 0;
   } else {
@@ -375,7 +374,7 @@ function changeB() {
   }
 }
 
-function changeC() {
+function changeC() { //Change user colors
   uColors = [];
   uColorR = floor(random(255));
   uColorG = floor(random(255));
@@ -383,6 +382,6 @@ function changeC() {
   uColors.push([uColorR,uColorG,uColorB]);
 }
 
-function changeG() {
+function changeG() { //Show or hide grid
   grid = !grid;
 }
