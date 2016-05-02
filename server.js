@@ -43,10 +43,14 @@ io.on('connection', function (socket) {
 
   socket.on('input name', function(data) { //Listen for when user submits their user name
     var index = allClients.indexOf(socket);
-    if(data === ""){ //If left input empty, leave default name
+    var loc = data.col;
+    var mess;
+    if(data.nam === ""){ //If left input empty, leave default name
     } else {
-      userNames.splice(index,1,data); //Switch out deafult with input
+      userNames.splice(index,1,data.nam); //Switch out deafult with input
     }
+    mess = "User " + userNames[index] + " connected!!";
+    socket.broadcast.emit('update message', {mes:mess, col:loc});
   });
 
   socket.on('loaded', function() { //Listen for when user ready to get updated
