@@ -1,6 +1,8 @@
 var socket = io.connect(window.location.origin);
 
-// =========================== Socket functions =================
+// ===========================================================
+//                      Socket Listeners
+// ===========================================================
 
 socket.on('host', function(data) { //Listen if server makes user 'host'
   host = data; //Make 'host'
@@ -77,7 +79,9 @@ socket.on('update messages', function(data) { //Listen for chat box update
   console.log('update chat');
 }); //Since I expect a lot of messages, there isn't much of a need to save all the entries
 
-//======================= Begin Sketch ====================
+// ==============================================================
+//                        Begin Sketch
+// ==============================================================
 
 var snake = [[0, 0],[1, 0],[2, 0]]; //Snake
 var allColors = [[255,0,0],[255,0,0],[255,0,0]]; //All colors
@@ -133,7 +137,6 @@ function setup() {
       apple(); //Create apple
     }
 
-
     console.log(boxes.length);
 
     console.log(host);
@@ -142,6 +145,8 @@ function setup() {
 function windowResized() { //If user resizes window and refreshes
   resizeCanvas(windowWidth-60, windowHeight-30);
 }
+
+//=========================== Key Event ================================
 
 function keyPressed() {
   var directionX; // changes index
@@ -184,6 +189,7 @@ function keyPressed() {
     }
   }
 
+//==================================== Draw =====================================
 
 function draw() {
 
@@ -252,8 +258,9 @@ function draw() {
     chat(); //Run chat
 
     timed++; //Snake movement is based on draw framerate; one of the reasons there is latency
-
 }
+
+//================================= Move Snake Function ==================================
 
 function time() { //Moves snake
     direct = direction.length - 1;
