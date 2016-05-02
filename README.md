@@ -8,7 +8,7 @@ Using the chat, viewers were able to play the game.
 However, with so many people sending commands it was difficult for the game to progress.
 Yet, eventually they were able to beat the game. 
 
-## Spaz Snake
+## The Game
 
 I thought this was a very interesting mechanic where many people try to play the same instance of a game.
 So I wanted to try applying this mechanic to a different game and see how successful it would be.
