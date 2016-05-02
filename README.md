@@ -25,4 +25,4 @@ What I found most interesting about this project was the visual representation o
 Having the chat/message box makes the game feel more fluid and alive as it gives the feeling that you are playing together as a collective.
 I also really liked that segments you add retain your color as it is a visual representation of your contribution to the progression of the game. 
 
-All code used in the files index.html, server.js, and SnakeS.js are all my own. I did not use any templates or examples in any major way other than to better understand the syntax.
+All code used in the files index.html, server.js, and SnakeS.js are all my own. I did not use any templates or examples in any major way other than to better understand the syntax. The documentation in the files go into detail about my choices and methods.
