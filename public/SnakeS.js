@@ -369,7 +369,7 @@ function sub(data) { //Function for when user submits username
     var urName = data;
 
     console.log(urName + " Welcome!");
-    socket.emit('input name', urName); //Send username to server
+    socket.emit('input name', {nam:urName,col:uColors}); //Send username to server
   }
 }
 
