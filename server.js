@@ -50,7 +50,7 @@ io.on('connection', function (socket) {
       userNames.splice(index,1,data.nam); //Switch out deafult with input
     }
     mess = "User " + userNames[index] + " connected!!";
-    socket.broadcast.emit('update message', {mes:mess, col:loc});
+    socket.broadcast.emit('update messages', {mes:mess, col:loc});
   });
 
   socket.on('loaded', function() { //Listen for when user ready to get updated
