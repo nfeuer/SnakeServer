@@ -20,6 +20,10 @@ Rather than having to keep sending the snake position back and forth between the
 After the initial update, the server just adds to the data on the sketch as the data comes rather than constantly overwriting the arrays.
 This way I was able to get instance for each user to run smoothly as well as having the turn command executed at almost the same time for each user.
 
+### How To Play
+
+Use the arrow keys to control the snake. When the key is pressed, the information is sent to the server and then broadcasted to all users. Commands are stored in a queue, so they are executed in the order they are recieved. This delay is intentional as every command is counted (except if in opposite direction of previous command). The colored squares (apple) players collect are in different locations for each user. If a user's apple is collected, the segment added to the body of the snake retains the color of the user who collected the apple.
+
 ## Thoughts
 What I found most interesting about this project was the visual representation of the other users playing the same game as you.
 Having the chat/message box makes the game feel more fluid and alive as it gives the feeling that you are playing together as a collective.
