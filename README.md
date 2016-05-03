@@ -1,5 +1,6 @@
 # Spaz Snake
 http://spazsnake.herokuapp.com/
+
 **IMPORTANT** Due to the mechanic for updating new connections, if the host is connected but tabbed out from the page, the data recieved from the server is incorrect and causes the new user's page to break. Will make changes in order to prevent this issue from happening, but until then please try again later. You can see if this is the error if you inspect the page and see the message "Snake" in the console. If there are more than 6 sets of numbers, then the host is currently tabbed out. Sorry for the inconvenience.
 
 ## Inspiration
