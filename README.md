@@ -7,7 +7,7 @@ My inspiration for this project was the Twitch Plays Pokemon project.
 This project livestreamed a Pokemon game that the viewers were able to interact with. 
 Using the chat, viewers were able to play the game. 
 However, with so many people sending commands it created chaos where it was very difficult to get anything done.
-Despite this, the game was eventaully completed. 
+Despite this, the game was eventually completed. 
 
 ## The Game
 
@@ -22,7 +22,7 @@ This way I was able to get instance for each user to run smoothly as well as hav
 
 ### How To Play
 
-Use the arrow keys to control the snake. When the key is pressed, the information is sent to the server and then broadcasted to all users. Commands are stored in a queue, so they are executed in the order they are recieved. This delay is intentional as every command is counted (except if in opposite direction of previous command). The colored squares (apple) players collect are in different locations for each user. If a user's apple is collected, the segment added to the body of the snake retains the color of the user who collected the apple.
+Use the arrow keys to control the snake. When the key is pressed, the information is sent to the server and then broadcasted to all users. Commands are stored in a queue, so they are executed in the order they are received. This delay is intentional as every command is counted (except if in opposite direction of previous command). The colored squares (apple) players collect are in different locations for each user. If a user's apple is collected, the segment added to the body of the snake retains the color of the user who collected the apple.
 
 ## Thoughts
 What I found most interesting about this project was the visual representation of the other users playing the same game as you.
